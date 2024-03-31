@@ -62,23 +62,23 @@ contract RektAttest {
     }
 
     // External function to confirm a proposed entry by index
-    function addEntry(uint index) public {
+    function confirmEntry(uint index) public {
         require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
-        _addEntry(index);
+        _confirmEntry(index);
     }
 
     // External function to confirm many proposed entries by index
-    function addMany(uint[] calldata indices) public {
+    function confirmMany(uint[] calldata indices) public {
         require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
         for (uint256 i = 0; i < indices.length; i++) {
-            _addEntry(indices[i]);
+            _confirmEntry(indices[i]);
         }
     }
 
     // Internal function to confirm a proposed entry by index
-    function _addEntry(uint index) internal {
+    function _confirmEntry(uint index) internal {
         ProposedEntry memory currentProposedEntry = proposedEntries[index];
         
         entries.push(currentProposedEntry._suggestion);
