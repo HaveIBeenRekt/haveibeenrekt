@@ -21,7 +21,7 @@ contract RektAttest {
     Entry[] public entries;
 
     // public proposer reputations
-    mapping(address => uint) public reputations;
+    mapping(address => int32) public reputations;
 
     // current proposed entries
     ProposedEntry[] public proposedEntries;
@@ -38,7 +38,6 @@ contract RektAttest {
 
     // Internal function to propose a new entry
     function _proposeEntry(address _addr, string memory _str) public {
-
         // add proposed entry to list
         Entry memory newEntry = Entry(_addr, _str);
         ProposedEntry memory newProposedEntry = ProposedEntry(newEntry, msg.sender);
@@ -52,23 +51,25 @@ contract RektAttest {
 
     // External function to add entry by index
     function addEntry(uint index) public {
-
         require(reputations[msg.sender] > 10, "Reputation too low");
 
         _addEntry(index);
-
     }
 
     // Internal function to add entry by index
     function _addEntry(uint index) internal {
-
         ProposedEntry memory currentProposedEntry = proposedEntries[index];
-
+        
         entries.push(currentProposedEntry.suggestion);
-
         reputations[currentProposedEntry.proposer] += 1;
 
         delete proposedEntries[index];
+    }
 
+    // allows gov to adjust reputation
+    function govAdjustReputation(address _addr, int32 _value) {
+        require(msg.sender == gov, "Only gov can adjust reputation");
+
+        reputations[_addr] += _value;
     }
 }
