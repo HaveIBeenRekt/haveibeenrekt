@@ -37,7 +37,7 @@ contract RektAttest {
     }
 
     // Internal function to propose a new entry
-    function _proposeEntry(address _addr, string memory _str) public {
+    function _proposeEntry(address _addr, string memory _str) internal {
         // add proposed entry to list
         Entry memory newEntry = Entry(_addr, _str);
         ProposedEntry memory newProposedEntry = ProposedEntry(newEntry, msg.sender);
@@ -67,9 +67,16 @@ contract RektAttest {
     }
 
     // allows gov to adjust reputation
-    function govAdjustReputation(address _addr, int32 _value) {
+    function govAdjustReputation(address _addr, int32 _value) public {
         require(msg.sender == gov, "Only gov can adjust reputation");
 
         reputations[_addr] += _value;
+    }
+
+    // allows gov to delete entry
+    function govDeleteEntry(uint index) public {
+        require(msg.sender == gov, "Only gov can delete entries");
+
+        delete entries[index];
     }
 }
