@@ -35,23 +35,23 @@ contract RektAttest {
     }
 
     // External function to propose a new entry
-    function proposeEntry(address _addr, string memory _str) public {
-        _proposeEntry(_addr, _str);
+    function proposeEntry(address _addr, string memory _description) public {
+        _proposeEntry(_addr, _description);
     }
 
     // External function to propose many new entries
-    function proposeMany(address[] calldata _addrs, string[] calldata _strs) public {
-        require(_addrs.length == _strs.length, "Address and description arrays must be same length");
+    function proposeMany(address[] calldata _addrs, string[] calldata _descriptions) public {
+        require(_addrs.length == _descriptions.length, "Address and description arrays must be same length");
 
         for (uint256 i = 0; i < _addrs.length; i++) {
-            _proposeEntry(_addrs[i], _strs[i]);
+            _proposeEntry(_addrs[i], _descriptions[i]);
         }
     }
 
     // Internal function to propose a new entry
-    function _proposeEntry(address _addr, string memory _str) internal {
+    function _proposeEntry(address _addr, string memory _description) internal {
         // add proposed entry to list
-        Entry memory newEntry = Entry(_addr, _str);
+        Entry memory newEntry = Entry(_addr, _description);
         ProposedEntry memory newProposedEntry = ProposedEntry(newEntry, msg.sender);
         proposedEntries.push(newProposedEntry);
 
@@ -62,29 +62,29 @@ contract RektAttest {
     }
 
     // External function to confirm a proposed entry by index
-    function confirmEntry(uint index) public {
+    function confirmEntry(uint _index) public {
         require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
-        _confirmEntry(index);
+        _confirmEntry(_index);
     }
 
     // External function to confirm many proposed entries by index
-    function confirmMany(uint[] calldata indices) public {
+    function confirmMany(uint[] calldata _indices) public {
         require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
-        for (uint256 i = 0; i < indices.length; i++) {
-            _confirmEntry(indices[i]);
+        for (uint256 i = 0; i < _indices.length; i++) {
+            _confirmEntry(_indices[i]);
         }
     }
 
     // Internal function to confirm a proposed entry by index
-    function _confirmEntry(uint index) internal {
-        ProposedEntry memory currentProposedEntry = proposedEntries[index];
+    function _confirmEntry(uint _index) internal {
+        ProposedEntry memory currentProposedEntry = proposedEntries[_index];
         
         entries.push(currentProposedEntry._suggestion);
         reputations[currentProposedEntry._proposer] += 1;
 
-        delete proposedEntries[index];
+        delete proposedEntries[_index];
     }
 
     // allows gov to adjust reputation
@@ -95,16 +95,16 @@ contract RektAttest {
     }
 
     // allows gov to delete entry
-    function govDeleteEntry(uint index) public {
+    function govDeleteEntry(uint _index) public {
         require(msg.sender == gov, "Only gov can delete entries");
 
-        delete entries[index];
+        delete entries[_index];
     }
 
     // allows gov to set new reputation threshold
-    function govSetThreshold(uint32 thresh) public {
+    function govSetThreshold(uint32 _thresh) public {
         require(msg.sender == gov, "Only gov can set new threshold");
 
-        reputationThreshold = thresh;
+        reputationThreshold = _thresh;
     }
 }
