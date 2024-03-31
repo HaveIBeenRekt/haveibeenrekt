@@ -38,6 +38,15 @@ contract RektAttest {
         _proposeEntry(_addr, _str);
     }
 
+    // External function to propose many new entries
+    function proposeMany(address[] calldata _addrs, string[] calldata _strs) public {
+        require(_addrs.length == _strs.length, "Address and description arrays must be same length");
+
+        for (uint256 i = 0; i < _addrs.length; i++) {
+            _proposeEntry(_addrs[i], _strs[i]);
+        }
+    }
+
     // Internal function to propose a new entry
     function _proposeEntry(address _addr, string memory _str) internal {
         // add proposed entry to list
@@ -56,6 +65,15 @@ contract RektAttest {
         require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
 
         _addEntry(index);
+    }
+
+    // External function to confirm many proposed entries by index
+    function addMany(uint[] calldata indices) public {
+        require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
+
+        for (uint256 i = 0; i < indices.length; i++) {
+            _addEntry(indices[i]);
+        }
     }
 
     // Internal function to confirm a proposed entry by index
@@ -82,7 +100,7 @@ contract RektAttest {
         delete entries[index];
     }
 
-    // allows gov to set new reputation reputationThreshold
+    // allows gov to set new reputation threshold
     function govSetThreshold(uint32 thresh) public {
         require(msg.sender == gov, "Only gov can set new threshold");
 
