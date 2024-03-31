@@ -5,6 +5,8 @@ contract RektAttest {
 
     address public gov;
 
+    uint32 public reputationThreshold = 10;
+
     // Entry struct used to represent records in database of nefarious addresses
     struct Entry {
         address scamAddress;
@@ -44,14 +46,14 @@ contract RektAttest {
         proposedEntries.push(newProposedEntry);
 
         // add proposal automatically if submission is from reputable address
-        if (reputations[msg.sender] > 10) {
+        if (reputations[msg.sender] > reputationThreshold) {
             _addEntry((proposedEntries.length - 1));
         }
     }
 
     // External function to add entry by index
     function addEntry(uint index) public {
-        require(reputations[msg.sender] > 10, "Reputation too low");
+        require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
 
         _addEntry(index);
     }
@@ -78,5 +80,12 @@ contract RektAttest {
         require(msg.sender == gov, "Only gov can delete entries");
 
         delete entries[index];
+    }
+
+    // allows gov to set new reputation reputationThreshold
+    function govSetThreshold(uint32 thresh) public {
+        require(msg.sender == gov, "Only gov can set new threshold");
+
+        reputationThreshold = thresh;
     }
 }
