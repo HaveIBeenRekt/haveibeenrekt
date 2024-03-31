@@ -7,16 +7,16 @@ contract RektAttest {
 
     uint32 public reputationThreshold = 10;
 
-    // Entry struct used to represent records in database of nefarious addresses
+    // Entry struct used to represent records in database of addresses
     struct Entry {
-        address scamAddress;
-        string description;
+        address _address;
+        string _description;
     }
 
     // Proposed Entry struct used to make a suggestion for new entry to database
     struct ProposedEntry {
-        Entry suggestion;
-        address proposer;
+        Entry _suggestion;
+        address _proposer;
     }
 
     // working "database" of entries
@@ -51,19 +51,19 @@ contract RektAttest {
         }
     }
 
-    // External function to add entry by index
+    // External function to confirm a proposed entry by index
     function addEntry(uint index) public {
         require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
 
         _addEntry(index);
     }
 
-    // Internal function to add entry by index
+    // Internal function to confirm a proposed entry by index
     function _addEntry(uint index) internal {
         ProposedEntry memory currentProposedEntry = proposedEntries[index];
         
-        entries.push(currentProposedEntry.suggestion);
-        reputations[currentProposedEntry.proposer] += 1;
+        entries.push(currentProposedEntry._suggestion);
+        reputations[currentProposedEntry._proposer] += 1;
 
         delete proposedEntries[index];
     }
