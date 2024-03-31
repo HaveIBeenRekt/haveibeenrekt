@@ -31,6 +31,7 @@ contract RektAttest {
     // sets gov when deploying
     constructor(address _gov) {
         gov = _gov;
+        reputations[_gov] = reputationThreshold;
     }
 
     // External function to propose a new entry
@@ -55,21 +56,21 @@ contract RektAttest {
         proposedEntries.push(newProposedEntry);
 
         // add proposal automatically if submission is from reputable address
-        if (reputations[msg.sender] > reputationThreshold) {
+        if (reputations[msg.sender] >= reputationThreshold) {
             _addEntry((proposedEntries.length - 1));
         }
     }
 
     // External function to confirm a proposed entry by index
     function addEntry(uint index) public {
-        require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
+        require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
         _addEntry(index);
     }
 
     // External function to confirm many proposed entries by index
     function addMany(uint[] calldata indices) public {
-        require(reputations[msg.sender] > reputationThreshold, "Reputation too low");
+        require(reputations[msg.sender] >= reputationThreshold, "Reputation too low");
 
         for (uint256 i = 0; i < indices.length; i++) {
             _addEntry(indices[i]);
