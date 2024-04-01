@@ -5,7 +5,7 @@ contract RektAttest {
 
     address public gov;
 
-    uint32 public reputationThreshold = 10;
+    uint32 public reputationThreshold;
 
     // Entry struct used to represent records in database of addresses
     struct Entry {
@@ -28,10 +28,11 @@ contract RektAttest {
     // current proposed entries
     ProposedEntry[] public proposedEntries;
 
-    // sets gov when deploying
-    constructor(address _gov) {
+    // sets gov and reputation threshold when deploying
+    constructor(address _gov, uint32 _thresh) {
         gov = _gov;
-        reputations[_gov] = reputationThreshold;
+        reputationThreshold = _thresh;
+        reputations[_gov] = _thresh;
     }
 
     // External function to propose a new entry
