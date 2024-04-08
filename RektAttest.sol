@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.16;
+pragma solidity =0.8.19;
 
 contract RektAttest {
 
@@ -23,7 +23,7 @@ contract RektAttest {
     Entry[] public entries;
 
     // public proposer reputations
-    mapping(address => int32) public reputations;
+    mapping(address => uint32) public reputations;
 
     // current proposed entries
     ProposedEntry[] public proposedEntries;
@@ -58,7 +58,7 @@ contract RektAttest {
 
         // add proposal automatically if submission is from reputable address
         if (reputations[msg.sender] >= reputationThreshold) {
-            _addEntry((proposedEntries.length - 1));
+            _confirmEntry((proposedEntries.length - 1));
         }
     }
 
@@ -89,7 +89,7 @@ contract RektAttest {
     }
 
     // allows gov to adjust reputation
-    function govAdjustReputation(address _addr, int32 _value) public {
+    function govAdjustReputation(address _addr, uint32 _value) public {
         require(msg.sender == gov, "Only gov can adjust reputation");
 
         reputations[_addr] += _value;
