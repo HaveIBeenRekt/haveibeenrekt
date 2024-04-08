@@ -108,4 +108,18 @@ contract RektAttest {
 
         reputationThreshold = _thresh;
     }
+
+    // reads entries, based on beginning index and maximum number to return
+    function readEntries(uint _beginIndex, uint _maxNum) external view returns (Entry[] memory) {
+        Entry[] memory workingEntries = new Entry[](_maxNum);
+
+        for (uint256 i = _beginIndex; i < (_maxNum + _beginIndex); i++) {
+            if (i == entries.length) {
+                break;
+            }
+            workingEntries[i] = entries[i];
+        }
+        
+        return workingEntries;
+    }
 }
