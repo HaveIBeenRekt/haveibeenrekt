@@ -21,6 +21,7 @@ contract RektAttest {
 
     event EntryProposed(address indexed _address, string indexed _description, address indexed _proposer);
     event EntryConfirmed(address indexed _address, string indexed _description, address indexed _proposer, uint _newReputation, address _confirmer);
+    event EntryRemoved(address indexed _address, string indexed _description);
 
     // working "database" of entries
     Entry[] public entries;
@@ -109,6 +110,8 @@ contract RektAttest {
     // allows gov to delete entry
     function govDeleteEntry(uint _index) public {
         require(msg.sender == gov, "Only gov can delete entries");
+        
+        emit EntryRemoved(entries[_index]._address, entries[_index]._description);
 
         delete entries[_index];
     }
