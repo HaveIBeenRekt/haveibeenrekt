@@ -4,8 +4,8 @@ pragma solidity =0.8.19;
 contract RektAttest {
 
     address public gov;
-
     uint32 public reputationThreshold;
+    uint256 public rewardDivisor;
 
     // Entry struct used to represent records in database of addresses
     struct Entry {
@@ -33,6 +33,7 @@ contract RektAttest {
         gov = _gov;
         reputationThreshold = _thresh;
         reputations[_gov] = _thresh;
+        rewardDivisor = 1000;
     }
 
     // External function to propose a new entry
@@ -79,11 +80,14 @@ contract RektAttest {
     }
 
     // Internal function to confirm a proposed entry by index
+    // Transfers ETH rewards to proposer
     function _confirmEntry(uint _index) internal {
         ProposedEntry memory currentProposedEntry = proposedEntries[_index];
         
         entries.push(currentProposedEntry._suggestion);
         reputations[currentProposedEntry._proposer] += 1;
+
+        currentProposedEntry._proposer.transfer((address(this).balance / rewardDivisor));
 
         delete proposedEntries[_index];
     }
@@ -122,4 +126,13 @@ contract RektAttest {
         
         return workingEntries;
     }
+
+    // allows gov to set new reward divisor value
+    function govSetDivisor(uint256 _divisor) public {
+        require(msg.sender == gov, "Only gov can set new divisor");
+        require(_divisor > 9, "Reward divisor must be at least 10");
+
+        rewardDivisor = _divisor;
+    }
+
 }
