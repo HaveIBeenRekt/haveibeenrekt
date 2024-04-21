@@ -95,7 +95,9 @@ contract RektAttest {
 
         emit EntryConfirmed(currentProposedEntry._suggestion._address, currentProposedEntry._suggestion._description, currentProposedEntry._proposer, reputations[currentProposedEntry._proposer], msg.sender);
 
-        currentProposedEntry._proposer.transfer((address(this).balance / rewardDivisor));
+        address payable rewardRecipient = payable(currentProposedEntry._proposer);
+
+        rewardRecipient.transfer((address(this).balance / rewardDivisor));
 
         delete proposedEntries[_index];
     }
