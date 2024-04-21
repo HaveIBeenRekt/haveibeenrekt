@@ -147,4 +147,9 @@ contract RektAttest {
         rewardDivisor = _divisor;
     }
 
+    // reads current ETH reward amount for confirmed entries
+    function readRewardAmount() external view returns (uint256) {
+        return (address(this).balance / rewardDivisor);
+    }
+
 }
