@@ -19,6 +19,9 @@ contract RektAttest {
         address _proposer;
     }
 
+    event EntryProposed(address indexed _address, string indexed _description, address indexed _proposer);
+    event EntryConfirmed(address indexed _address, string indexed _description, address indexed _proposer, uint _newReputation, address _confirmer);
+
     // working "database" of entries
     Entry[] public entries;
 
@@ -57,6 +60,8 @@ contract RektAttest {
         ProposedEntry memory newProposedEntry = ProposedEntry(newEntry, msg.sender);
         proposedEntries.push(newProposedEntry);
 
+        emit EntryProposed(_addr, _description, msg.sender);
+
         // add proposal automatically if submission is from reputable address
         if (reputations[msg.sender] >= reputationThreshold) {
             _confirmEntry((proposedEntries.length - 1));
@@ -86,6 +91,8 @@ contract RektAttest {
         
         entries.push(currentProposedEntry._suggestion);
         reputations[currentProposedEntry._proposer] += 1;
+
+        emit EntryConfirmed(currentProposedEntry._suggestion._address, currentProposedEntry._suggestion._description, currentProposedEntry._proposer, reputations[currentProposedEntry._proposer], msg.sender);
 
         currentProposedEntry._proposer.transfer((address(this).balance / rewardDivisor));
 
